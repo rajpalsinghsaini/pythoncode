@@ -1,1 +1,1 @@
-printds("Wassup Buddy!! updated123")
+print("Wassup Buddy!! updated123")
