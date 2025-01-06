@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+    stages {
+        stage('Pull') {
+            steps {
+                sh 'echo "Pipeline from Git"'
+            }
+        }
+        stage('Test') {
+            steps {
+                 sh 'echo "Testing Completed in pipeline.jdp"'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deployment Completed"'
+            }
+        }
+    }
+}
