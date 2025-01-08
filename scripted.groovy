@@ -6,6 +6,6 @@ node {
         echo "Test success in scripted pipeline"
     }
     stage('Deploy') {
-        echo "Deployment success in scripted pipeline"
+        echo "Deployment success in scripted pipeline Updated"
     }
 }
