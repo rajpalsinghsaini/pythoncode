@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    
+    environment {
+		DOCKERHUB_CREDENTIALS=credentials('docker-key')
+    }
+     parameters {
+	    string(name: 'dockerUser', defaultValue: 'None', description: 'Enter Docker user name ')   
+    }
+    stages {
+        stage('Clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/rajpalsinghsaini/pythoncode.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                 withCredentials([usernamePassword(credentialsId: 'docker-key', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh "docker login --username ${USERNAME} -p ${PASSWORD}"
+                 }
+                //sh 'docker ps'
+                //sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login --username ${dockerUser} --password-stdin"
+               
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'docker build /var/lib/jenkins/workspace/${JOB_NAME} -t ${dockerUser}/pythoncode'
+                
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'docker run -tid -p 81:80 ${dockerUser}/pythoncode:latest'
+            }
+        }
+    }
+}
