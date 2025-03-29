@@ -1,4 +1,4 @@
-FROM NGINX:latest
+FROM nginx:latest
 RUN apt-get update -y
 WORKDIR /usr/share/nginx/html
 RUN touch index.html 
