@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/rajpalsinghsaini/pythoncode.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                withKubeConfig(caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'kube-cred', namespace: 'devops-tools', restrictKubeConfigAccess: false, serverUrl: 'https://192.168.49.2:8443') {
+                     sh "kubectl get pods"
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'echo "Test Success"'
+                
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploy Success"'
+            }
+        }
+    }
+}
