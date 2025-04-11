@@ -1,0 +1,39 @@
+https://medium.com/@lilnya79/integrate-jenkins-with-amazon-ecr-4946ca5b86e1
+
+pipeline {
+    agent any
+    environment {
+        AWS_REGION = 'us-east-2'
+        ECR_REPO = 'ecr-jenkins'
+        AWS_ACCOUNT_ID = '390403857742'
+        URL_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+    }
+    stages {
+        stage('Login') {
+            steps {
+                //sh 'aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 390403857742.dkr.ecr.us-east-2.amazonaws.com'
+                sh 'docker tag ecrimage:v1 390403857742.dkr.ecr.us-east-2.amazonaws.com/ecr-jenkins:latest'
+                sh 'echo "Login Success"'
+            }
+        }
+        stage('Tag') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'ecr-cred', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        // Login to ECR
+                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${URL_REGISTRY}"
+
+                        // Push Docker image to ECR
+                        sh "docker push ${URL_REGISTRY}/$ECR_REPO:latest"
+                    }
+                }
+            }
+        }
+        stage('List') {
+            steps {
+                //sh 'docker push 390403857742.dkr.ecr.us-east-2.amazonaws.com/ecr-jenkins:latest'
+                sh 'echo "List Success"'
+            }
+        }
+    }
+}
